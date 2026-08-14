@@ -10,16 +10,4 @@ jobs:
 
       - name: Create and Navigate Directories
         run: |
-          echo "=== 1. Creating a new directory ==="
-          mkdir my_new_folder
-          
-          echo "=== 2. Moving into that directory and creating a file ==="
-          cd my_new_folder
-          touch notes.txt
-          echo "Hello inside the folder!" > notes.txt
-          
-          echo "=== 3. Showing where we are right now ==="
-          pwd
-          
-          echo "=== 4. Listing contents of this new folder ==="
-          ls -la
+          sudo useradd -m -s /bin/bash labuser
