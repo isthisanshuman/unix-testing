@@ -1,14 +1,106 @@
-name: Run Unix Commands
+name: Unix Lab Solutions
+
 on: [push]
 
 jobs:
-  execute-bash:
+  unix-lab:
     runs-on: ubuntu-latest
+
     steps:
+
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Create and Navigate Directories
+      # ==========================================
+      # Q1. Create a new user
+      # ==========================================
+      - name: Q1 - Create user labuser
         run: |
+          sudo useradd -m -s /bin/bash labuser
+          id labuser
+          ls -ld /home/labuser
+          grep '^labuser:' /etc/passwd
+
+      # ==========================================
+      # Q2. /etc/passwd and /etc/shadow
+      # ==========================================
+      - name: Q2 - Display user account information
+        run: |
+          echo "----- /etc/passwd -----"
+          cat /etc/passwd | grep '^labuser:'
+
+          echo "----- /etc/shadow -----"
+          sudo cat /etc/shadow | grep '^labuser:'
+
+      # ==========================================
+      # Q3. Add user to secondary group
+      # ==========================================
+      - name: Q3 - Add labuser to staff group
+        run: |
+          sudo groupadd -f staff
           sudo usermod -aG staff labuser
           groups labuser
+          id labuser
+
+      # ==========================================
+      # Q4. Explain UID, GID and Groups
+      # ==========================================
+      - name: Q4 - Display UID GID and groups
+        run: |
+          id labuser
+
+      # ==========================================
+      # Q5. Convert rwxr-xr-- to 754
+      # ==========================================
+      - name: Q5 - Set permissions to 754
+        run: |
+          touch file.txt
+          chmod 754 file.txt
+          ls -l file.txt
+
+      # ==========================================
+      # Q6. chmod 700 and chmod 777
+      # ==========================================
+      - name: Q6 - Demonstrate chmod 700 and 777
+        run: |
+          touch secure.txt
+          touch public.txt
+
+          chmod 700 secure.txt
+          chmod 777 public.txt
+
+          echo "----- chmod 700 -----"
+          ls -l secure.txt
+
+          echo "----- chmod 777 -----"
+          ls -l public.txt
+
+      # ==========================================
+      # Q7. Change owner and group
+      # ==========================================
+      - name: Q7 - Change owner and group
+        run: |
+          touch report.txt
+          sudo chown alice:staff report.txt
+
+          echo "----- Ownership of report.txt -----"
+          ls -l report.txt
+
+      # ==========================================
+      # Q8. umask 022
+      # ==========================================
+      - name: Q8 - Demonstrate umask 022
+        run: |
+          umask 022
+
+          echo "----- Current umask -----"
+          umask
+
+          touch newfile.txt
+          mkdir newdirectory
+
+          echo "----- New file permissions -----"
+          ls -l newfile.txt
+
+          echo "----- New directory permissions -----"
+          ls -ld newdirectory
