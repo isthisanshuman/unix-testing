@@ -10,6 +10,5 @@ jobs:
 
       - name: Create and Navigate Directories
         run: |
-          sudo useradd -m -s /bin/bash labuser
-          id labuser
-          cat /etc/passwd
+          sudo usermod -aG staff labuser
+          groups labuser
