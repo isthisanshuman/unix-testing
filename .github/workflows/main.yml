@@ -12,95 +12,143 @@ jobs:
         uses: actions/checkout@v4
 
       # ==========================================
-      # Q1. Create a new user
+      # Q1 - Create a new user
       # ==========================================
       - name: Q1 - Create user labuser
         run: |
-          sudo useradd -m -s /bin/bash labuser
+          echo "===== Q1: Create User ====="
+
+          if id labuser >/dev/null 2>&1; then
+            echo "labuser already exists"
+          else
+            sudo useradd -m -s /bin/bash labuser
+            echo "labuser created successfully"
+          fi
+
+          echo "User information:"
           id labuser
+
+          echo "Home directory:"
           ls -ld /home/labuser
+
+          echo "User entry in /etc/passwd:"
           grep '^labuser:' /etc/passwd
 
+
       # ==========================================
-      # Q2. /etc/passwd and /etc/shadow
+      # Q2 - /etc/passwd and /etc/shadow
       # ==========================================
-      - name: Q2 - Display user account information
+      - name: Q2 - passwd and shadow
         run: |
-          echo "----- /etc/passwd -----"
-          cat /etc/passwd | grep '^labuser:'
+          echo "===== Q2: /etc/passwd ====="
+          grep '^labuser:' /etc/passwd
 
-          echo "----- /etc/shadow -----"
-          sudo cat /etc/shadow | grep '^labuser:'
+          echo "===== Q2: /etc/shadow ====="
+          sudo grep '^labuser:' /etc/shadow
+
 
       # ==========================================
-      # Q3. Add user to secondary group
+      # Q3 - Add user to secondary group
       # ==========================================
       - name: Q3 - Add labuser to staff group
         run: |
+          echo "===== Q3: Secondary Group ====="
+
           sudo groupadd -f staff
           sudo usermod -aG staff labuser
+
+          echo "Groups of labuser:"
           groups labuser
+
+          echo "Complete ID information:"
           id labuser
 
+
       # ==========================================
-      # Q4. Explain UID, GID and Groups
+      # Q4 - UID, GID and Groups
       # ==========================================
       - name: Q4 - Display UID GID and groups
         run: |
+          echo "===== Q4: UID, GID and Groups ====="
+
           id labuser
 
+
       # ==========================================
-      # Q5. Convert rwxr-xr-- to 754
+      # Q5 - rwxr-xr-- = 754
       # ==========================================
       - name: Q5 - Set permissions to 754
         run: |
+          echo "===== Q5: Permission 754 ====="
+
           touch file.txt
           chmod 754 file.txt
+
+          echo "Permissions of file.txt:"
           ls -l file.txt
 
+
       # ==========================================
-      # Q6. chmod 700 and chmod 777
+      # Q6 - chmod 700 and chmod 777
       # ==========================================
       - name: Q6 - Demonstrate chmod 700 and 777
         run: |
+          echo "===== Q6: chmod 700 and chmod 777 ====="
+
           touch secure.txt
           touch public.txt
 
           chmod 700 secure.txt
           chmod 777 public.txt
 
-          echo "----- chmod 700 -----"
+          echo "chmod 700:"
           ls -l secure.txt
 
-          echo "----- chmod 777 -----"
+          echo "chmod 777:"
           ls -l public.txt
 
+
       # ==========================================
-      # Q7. Change owner and group
+      # Q7 - Change owner and group
       # ==========================================
       - name: Q7 - Change owner and group
         run: |
+          echo "===== Q7: Change Owner and Group ====="
+
+          if id alice >/dev/null 2>&1; then
+            echo "alice already exists"
+          else
+            sudo useradd -m alice
+            echo "alice created successfully"
+          fi
+
+          sudo groupadd -f staff
+
           touch report.txt
+
           sudo chown alice:staff report.txt
 
-          echo "----- Ownership of report.txt -----"
+          echo "Ownership of report.txt:"
           ls -l report.txt
 
+
       # ==========================================
-      # Q8. umask 022
+      # Q8 - umask 022
       # ==========================================
       - name: Q8 - Demonstrate umask 022
         run: |
+          echo "===== Q8: umask 022 ====="
+
           umask 022
 
-          echo "----- Current umask -----"
+          echo "Current umask:"
           umask
 
           touch newfile.txt
-          mkdir newdirectory
+          mkdir -p newdirectory
 
-          echo "----- New file permissions -----"
+          echo "New file permissions:"
           ls -l newfile.txt
 
-          echo "----- New directory permissions -----"
+          echo "New directory permissions:"
           ls -ld newdirectory
